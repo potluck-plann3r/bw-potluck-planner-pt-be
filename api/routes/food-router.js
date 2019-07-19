@@ -19,28 +19,30 @@ router.post("/", restricted, async (req, res) => {
   if (!potluckId || !foodCategory || !foodDescription || !servings) {
     res.status(400).json({
       message:
-        "please provide a potluckId, foodCategory, foodDescription, and # of servings"
+        "Please provide a potluckId, foodCategory, foodDescription, and # of servings."
     });
   }
   try {
     if (!potluck) {
       res.status(404).json({
-        message: "no such potluck"
+        message: "This potluck doesn't exist."
       });
-    } else if (relationship && relationship.role === 1 || relationship.role === 0) {
+    } else if (
+      (relationship && relationship.role === 1) ||
+      relationship.role === 0
+    ) {
       let foodToInsert = {
         userId: req.id,
         potluckId,
         foodCategory,
         foodDescription,
-        servings,
+        servings
       };
       await Food.insert(foodToInsert);
       res.status(200).json(req.body);
     } else {
       res.status(400).json({
-        message:
-          "you are not a member of this potluck, so you cannot add food to it"
+        message: "You can't add food to a potluck that you aren't a member of."
       });
     }
   } catch (error) {

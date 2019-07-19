@@ -35,7 +35,6 @@ async function remove(id) {
     .del();
 }
 
-async function getByPotluckId(potluckId) { 
-  return await db("potluckRequirements")
-  .where({potluckId})
+async function getByPotluckId(potluckId) {
+  return await db("potluckRequirements").where({ potluckId });
 }

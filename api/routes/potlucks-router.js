@@ -3,6 +3,7 @@ const Potlucks = require("../../data/models/potlucksModel.js");
 const UsersPotlucks = require("../../data/models/usersPotlucksModel.js");
 const Users = require("../../data/models/usersModel.js");
 const PotluckRequirements = require("../../data/models/potluckRequirementsModel.js");
+const PotluckFood = require("../../data/models/foodModel.js");
 
 const router = require("express").Router();
 
@@ -31,7 +32,7 @@ router.post("/", restricted, async (req, res) => {
     ) {
       res.status(400).json({
         message:
-          "please provide a name, address, street, state, city, country and postalcode"
+          "Please provide a name, address, street, state, city, country and postal code."
       });
     }
     await Potlucks.insert(newPotluck);
@@ -58,9 +59,10 @@ router.post("/", restricted, async (req, res) => {
 router.get("/", restricted, async (req, res) => {
   try {
     let potlucks = await Potlucks.findMyPotlucks(req.id);
+
     res.status(200).json(potlucks);
   } catch (error) {
-    res.status(500).error;
+    res.status(500).json(error);
   }
 });
 
@@ -70,7 +72,7 @@ router.post("/user/add", restricted, async (req, res) => {
     if (!potluckId || !role || !email) {
       res.status(400).json({
         message:
-          "please provide a the potluckId of the potluck to add, as well as user's email and role"
+          "Please provide the potluckId of the potluck to add as well as user's email and role."
       });
     }
     let user = await Users.findByEmail(email);
@@ -115,12 +117,10 @@ router.post("/reqs/:id", restricted, async (req, res) => {
       await PotluckRequirements.insert(response);
       res.status(200).json(response);
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "you are not an organizer of this potluck, so you can't add requirements to it"
-        });
+      res.status(400).json({
+        message:
+          "You can't add requirements to a potluck that you aren't an organizer of."
+      });
     }
   } catch (error) {
     res.status(500).error;
@@ -146,7 +146,7 @@ router.put("/:id", restricted, async (req, res) => {
     let relationship = await UsersPotlucks.findByUserIdAndPotluckId(req.id, id);
     if (!potluck) {
       res.status(404).json({
-        message: "no such potluck"
+        message: "This potluck doesn't exist."
       });
     } else if (relationship && relationship.role === 0) {
       await Potlucks.update(id, req.body);
@@ -154,8 +154,7 @@ router.put("/:id", restricted, async (req, res) => {
       res.status(200).json(updatedPotluck);
     } else {
       res.status(400).json({
-        message:
-          "you are not an organizer of this potluck, so you cannot edit it"
+        message: "You can't edit a potluck that you aren't an organizer of."
       });
     }
   } catch (error) {
@@ -170,15 +169,14 @@ router.delete("/:id", restricted, async (req, res) => {
     let relationship = await UsersPotlucks.findByUserIdAndPotluckId(req.id, id);
     if (!potluck) {
       res.status(404).json({
-        message: "no such potluck"
+        message: "This potluck doesn't exist."
       });
     } else if (relationship && relationship.role === 0) {
       await Potlucks.remove(id);
       res.status(200).json(potluck);
     } else {
       res.status(400).json({
-        message:
-          "you are not an organizer of this potluck, so you cannot delete it"
+        message: "You can't delete a potluck that you aren't an organizer of."
       });
     }
   } catch (error) {

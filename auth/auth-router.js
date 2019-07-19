@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
     await Users.insert(user);
     let insertedUser = await Users.findByEmail(user.email);
     res.status(201).json({
-      message: `welcome ${insertedUser.firstName}, u are now registered`
+      message: `Welcome ${insertedUser.firstName}! You are now registered.`
     });
   } catch (error) {
     console.log(error);
@@ -43,11 +43,11 @@ router.post("/login", (req, res) => {
         const token = generateToken(user);
 
         res.status(200).json({
-          message: `hello again ${user.firstName}, u are now logged in`,
+          message: `Welcome back, ${user.firstName}. You are now logged in.`,
           authToken: token
         });
       } else {
-        res.status(401).json({ message: "invalid Credentials" });
+        res.status(401).json({ message: "Invalid credentials." });
       }
     })
     .catch(error => {

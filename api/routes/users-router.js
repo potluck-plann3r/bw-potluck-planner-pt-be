@@ -12,7 +12,7 @@ router.get("/:id", restricted, (req, res) => {
   } else {
     res
       .status(401)
-      .json({ message: "you are not authorized to see this user" });
+      .json({ message: "You are not authorized to see this user." });
   }
 });
 

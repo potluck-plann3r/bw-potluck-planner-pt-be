@@ -9,7 +9,8 @@ module.exports = {
   findByLocation,
   findByUserId,
   findAdminPotlucks,
-  findMyPotlucks
+  findMyPotlucks,
+  getAllAttendees
 };
 
 async function getAll() {
@@ -50,16 +51,23 @@ async function findByUserId(userId) {
     .where("usersPotlucks.userId", Number(userId));
 }
 
-
 async function findAdminPotlucks(userId) {
   return await db("potlucks")
     .join("usersPotlucks", { "potlucks.id": "usersPotlucks.potluckId" })
     .where("usersPotlucks.role", 0)
-    .andWhere("userId", Number(userId))
+    .andWhere("userId", Number(userId));
 }
 
 async function findMyPotlucks(userId) {
   return await db("potlucks")
     .join("usersPotlucks", { "potlucks.id": "usersPotlucks.potluckId" })
-    .where("userId", Number(userId))
+    .where("userId", Number(userId));
+}
+
+async function getAllAttendees(id) {
+  return await db
+    .select("firstName", "lastName", "email", "attendance, role")
+    .from("users")
+    .join("usersPotlucks", { "users.id": "usersPotlucks.id" })
+    .where("id", Number(id));
 }
